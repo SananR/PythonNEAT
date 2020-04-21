@@ -1,1 +1,1 @@
-# NEAT
+# PythonNEAT
