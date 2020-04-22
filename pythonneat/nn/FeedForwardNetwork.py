@@ -58,6 +58,11 @@ class FeedForwardNetwork:
         for i in range(1, self.num_layers):
             self.layers += [Layer(self.layer_sizes[i-1], self.layer_sizes[i])]
 
+    def layer(self, num_in, num_nodes, act_func=None):
+        if act_func is None:
+            act_func = Activations.sigmoid
+        self.layers += [Layer(num_in, num_nodes, act_func=act_func)]
+
     def forward_propagate(self, inp):
         """Propagates through the network, activating each layer and returning
         the activation of the last layer (output layer)
