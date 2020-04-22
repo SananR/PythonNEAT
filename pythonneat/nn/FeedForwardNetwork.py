@@ -21,7 +21,7 @@ class Layer:
         self.weighted_sum = np.zeros(num_nodes)
         self.biases = np.zeros(num_nodes)
         self.output = np.zeros(num_nodes)
-        self.weights = np.random.rand(num_nodes, num_nodes_in)
+        self.weights = np.random.uniform(low=-2, high=2, size=(num_nodes, num_nodes_in))
 
     def activate(self, inp):
         """Returns output of layer given input
@@ -38,7 +38,7 @@ class Layer:
 
 
 class FeedForwardNetwork:
-    def __init__(self, num_in, network_structure):
+    def __init__(self, num_in):
         """Creates a Neural Network that takes num_in inputs, has
         len(network_structure) layers (not including input), and where the nth
         layer, has network_structure[n] nodes
@@ -48,20 +48,20 @@ class FeedForwardNetwork:
         network_structure: an array representing the # of nodes in each layer,
         includes output layer. type: int[# of layers]
         """
-        self.num_layers = len(network_structure)
+        self.num_layers = 0
         self.num_in = num_in
-        self.num_out = network_structure[self.num_layers - 1]
-        self.layer_sizes = network_structure
+        self.num_out = 0
         self.layers = []
 
-        self.layers += [Layer(num_in, self.layer_sizes[0])]
-        for i in range(1, self.num_layers):
-            self.layers += [Layer(self.layer_sizes[i-1], self.layer_sizes[i])]
-
-    def layer(self, num_in, num_nodes, act_func=None):
+    def layer(self, num_nodes, act_func=None):
         if act_func is None:
             act_func = Activations.sigmoid
-        self.layers += [Layer(num_in, num_nodes, act_func=act_func)]
+        if len(self.layers) == 0:
+            self.layers += [Layer(self.num_in, num_nodes, act_func=act_func)]
+        else:
+            self.layers += [Layer(self.layers[self.num_layers - 1].size, num_nodes, act_func=act_func)]
+        self.num_layers += 1
+        self.num_out = self.layers[self.num_layers - 1].size
 
     def forward_propagate(self, inp):
         """Propagates through the network, activating each layer and returning
