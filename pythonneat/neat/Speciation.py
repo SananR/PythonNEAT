@@ -1,5 +1,5 @@
 import pythonneat.neat.Genome as Genome
-import  pythonneat.neat.utils.Parameters as Parameters
+import pythonneat.neat.utils.Parameters as Parameters
 
 current_innovation = 0
 
@@ -16,14 +16,14 @@ def add_genome(genome):
     """
     for i in range(len(species)):
         first = species[i][0]
-        if compatability_distance(genome, first) < Parameters.COMPATABILITY_THRESHOLD:
+        if compatibility_distance(genome, first) < Parameters.COMPATABILITY_THRESHOLD:
             species[i].append(genome)
     species.append([genome])
     return
 
 
-def compatability_distance(i, j):
-    """Returns the compatability distance between
+def compatibility_distance(i, j):
+    """Returns the compatibility distance between
     organism i and organism j
 
     Inputs:
@@ -31,7 +31,10 @@ def compatability_distance(i, j):
     j - Second organism. type: Genome
     """
     # As described in the paper published in 2002 by Stanley O. Brian
-    N = 1  # TODO: Calculate N
+    N = max(len(i.connection_genes), len(j.connection_genes))
+    if N < Parameters.DELTA_NORMALIZATION_THRESHOLD:
+        N = 1
+
     genes = Genome.match_genes(i, j)
     E = genes[0]
     D = genes[1]

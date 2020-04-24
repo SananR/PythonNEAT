@@ -1,7 +1,16 @@
+import pythonneat.neat.utils.Parameters as Parameters
+import pythonneat.neat.Population as Population
+import pythonneat.neat.Speciation as Speciation
+import pythonneat.neat.Gene.NodeGene as NodeGene
+import pythonneat.neat.Gene.ConnectionGene as ConnectionGene
+
+
 class Genome:
 
     def __init__(self):
+        self.current_node_id = 1
         self.node_genes = []
+        self.fitness = 0
         # Dictionary mapping innovation numbers to genes
         self.connection_genes = {}
 
@@ -15,6 +24,30 @@ class Genome:
             if cg.innovation >= max:
                 mv = cg.innovation
         return mv
+
+    def add_node_gene(self, node_type):
+        """Adds and returns a new node gene with type node_type
+
+        Inputs:
+        node_type: The type of node. type: NodeType
+        """
+        node = NodeGene(node_type)
+        self.node_genes.append(node)
+        return node
+
+    def add_connection_gene(self, in_id, out_id, weight, enabled):
+        """Adds and returns a new connection gene
+
+        Inputs:
+        in_id
+        out_id
+        weight
+        enabled
+        """
+        Speciation.current_innovation += 1
+        connection = ConnectionGene(in_id, out_id, weight, enabled, Speciation.current_innovation)
+        self.connection_genes[Speciation.current_innovation] = connection
+        return connection
 
 
 def match_genes(i, j):
@@ -54,3 +87,33 @@ def match_genes(i, j):
     else:
         rtrn[2] = 0
     return rtrn
+
+
+def share_function(delta):
+    """Returns 0 when delta is above COMPATABILITY_THRESHOLD,
+    returns 1 otherwise. When j is all organisms in the population
+    this function represents number of organisms in that genome's
+    species
+
+    Inputs:
+    delta: compatibility_distance(i, j). type: float
+    """
+    if delta > Parameters.COMPATABILITY_THRESHOLD:
+        return 0
+    else:
+        return 1
+
+
+def adjusted_fitness(i, original_fitness):
+    """Returns the adjusted fitness of organism i, based on
+    the current population
+
+    Inputs:
+    i: The organism corresponding to original_fitness. type: Genome
+    original_fitness: The fitness of genome i. type: float
+    """
+    sum = 0
+    for genome in Population.current_genomes:
+        sum += share_function(Speciation.compatibility_distance(i, genome))
+    # sum is assumed to non-zero because i is included in current_genomes
+    return original_fitness / sum
