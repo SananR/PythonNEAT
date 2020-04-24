@@ -28,8 +28,9 @@ def match_genes(i, j):
     """
     # O(1) - Best case constant complexity
     # O(n) - Average case LINEAR complexity!
-    # TODO: Calculate average weight difference
-    rtrn = [0, 0, 0]
+    wd = 0
+    wdd = 0
+    rtrn = [0, 0, 0.0]
     if i.innovation_range >= j.innovation_range:
         for k in range(1, i.innovation_range + 1):
             if k > j.innovation_range:
@@ -37,7 +38,8 @@ def match_genes(i, j):
             elif k not in j.connection_nodes:
                 rtrn[1] += 1
             else:
-                rtrn[2] += 1
+                wd += abs(i.connection_nodes[k].weight - j.connection_nodes[k].weight)
+                wdd += 1
     else:
         for k in range(1, j.innovation_range + 1):
             if k > j.innovation_range:
@@ -45,5 +47,10 @@ def match_genes(i, j):
             elif k not in j.connection_nodes:
                 rtrn[1] += 1
             else:
-                rtrn[2] += 1
+                wd += abs(j.connection_nodes[k].weight - i.connection_nodes[k].weight)
+                wdd += 1
+    if wdd != 0:
+        rtrn[2] = wd/wdd
+    else:
+        rtrn[2] = 0
     return rtrn
