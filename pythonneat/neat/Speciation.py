@@ -1,25 +1,16 @@
 import pythonneat.neat.Genome as Genome
 import pythonneat.neat.utils.Parameters as Parameters
 
-current_innovation = 0
-
-# List of lists of genomes
-species = [[]]
+genes = {}
 
 
-def add_genome(genome):
-    """Adds genome to the species list based on its
-    compatability distance to already existing species
-
-    Inputs:
-    genome: The genome to add. type: Genome
-    """
-    for i in range(len(species)):
-        first = species[i][0]
-        if compatibility_distance(genome, first) < Parameters.COMPATABILITY_THRESHOLD:
-            species[i].append(genome)
-    species.append([genome])
-    return
+def get_innovation(connection_gene):
+    for g in genes.items():
+        if g[1].in_id == connection_gene.in_id and g[1].out_id == connection_gene.out_id:
+            return g[0]
+    innov = len(genes) + 1
+    genes[innov] = connection_gene
+    return innov
 
 
 def compatibility_distance(i, j):
@@ -36,8 +27,13 @@ def compatibility_distance(i, j):
         N = 1
 
     genes = Genome.match_genes(i, j)
-    E = genes[0]
-    D = genes[1]
-    W = genes[2]
-    delta = (Parameters.EXCESS_IMPORTANCE*E)/N + (Parameters.DISJOINT_IMPORTANCE*D)/N + Parameters.WEIGHT_DIFFERENCE_IMPORTANCE*W
+    E = len(genes[0])
+    D = len(genes[1])
+    W = 0
+    # Calculate weight difference
+    for g in genes[2]:
+        W += abs(i.connection_genes[g].weight - j.connection_genes[g].weight)
+    W /= max(len(genes[2]), 1)
+
+    delta = ((Parameters.EXCESS_IMPORTANCE*E)/N) + ((Parameters.DISJOINT_IMPORTANCE*D)/N) + (Parameters.WEIGHT_DIFFERENCE_IMPORTANCE*W)
     return delta

@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pythonneat-SananR", # Replace with your own username
-    version="0.1.1",
+    version="2.3.8",
     author="Sanan Rao",
     author_email="raosanan@gmail.com",
     description="An implementation for NEAT (Neuroevolution of Augmenting Topologies) By Stanley O. Brian",

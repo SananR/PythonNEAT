@@ -10,13 +10,15 @@ class NodeType(enum.Enum):
 
 class NodeGene:
 
-    def __init__(self, node_type):
+    def __init__(self, id, node_type, height):
         """
         Inputs:
         node_type: Type of the node. type: NodeType
+        id: Id of the node. type: int
         """
-        self.id = 0
+        self.id = id
         self.node_type = node_type
+        self.height = height
 
 
 class ConnectionGene:
